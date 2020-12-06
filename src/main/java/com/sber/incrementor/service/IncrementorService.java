@@ -1,10 +1,14 @@
 package com.sber.incrementor.service;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Component
+/**
+ * Service providing logic for incrementing counter value in
+ * a thread safe manner.
+ */
+@Service
 public class IncrementorService implements IIncrementor {
 
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -15,13 +19,17 @@ public class IncrementorService implements IIncrementor {
         return counter.get();
     }
 
+    public int getMaximumValue() {
+        return maxValue.get();
+    }
+
     @Override
     public void incrementNumber() {
         while(true) {
             int existingValue = getNumber();
             int newValue = existingValue + 1;
             if(counter.compareAndSet(existingValue, newValue)) {
-                if(getNumber() > maxValue.get()) {
+                if(getNumber() > getMaximumValue()) {
                     setCurrentNumberToZero();
                 }
                 return;
@@ -36,9 +44,9 @@ public class IncrementorService implements IIncrementor {
         }
 
         while(true) {
-            int existingValue = maxValue.get();
+            int existingValue = getMaximumValue();
             if(maxValue.compareAndSet(existingValue, newMaxValue)) {
-                if(getNumber() > maxValue.get()) {
+                if(getNumber() > getMaximumValue()) {
                     setCurrentNumberToZero();
                 }
                 return;
@@ -46,6 +54,10 @@ public class IncrementorService implements IIncrementor {
         }
     }
 
+    /**
+     * Setting current value of the counter to zero. Can be used when
+     * maximum value is reached.
+     */
     private void setCurrentNumberToZero() {
         while(true) {
             int currentValue = getNumber();

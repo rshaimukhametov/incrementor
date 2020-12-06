@@ -3,11 +3,15 @@ package com.sber.incrementor.controller;
 import com.sber.incrementor.service.IncrementorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller providing endpoints for working with {@link IncrementorService}.
+ * Description of the underlying logic can be checked in service documentation.
+ */
 @RestController
 @RequestMapping("incrementor")
 @RequiredArgsConstructor
@@ -25,8 +29,8 @@ public class IncrementorController {
         incrementorService.incrementNumber();
     }
 
-    @PutMapping(value = "/maximum/{newMaxValue}", produces = "application/json")
-    public void setMaximumValue(@PathVariable int newMaxValue) {
+    @PutMapping(value = "/maximum", produces = "application/json")
+    public void setMaximumValue(@RequestParam int newMaxValue) {
         incrementorService.setMaximumValue(newMaxValue);
     }
 }
