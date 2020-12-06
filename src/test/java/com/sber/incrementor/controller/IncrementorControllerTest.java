@@ -51,4 +51,10 @@ public class IncrementorControllerTest {
 
         verify(incrementorService, times(1)).setMaximumValue(3);
     }
+
+    @Test
+    void shouldSetMaximumValueWithException() throws Exception {
+        mockMvc.perform(put("/incrementor/maximum?newMaxValue=-3"))
+                .andExpect(status().isBadRequest());
+    }
 }

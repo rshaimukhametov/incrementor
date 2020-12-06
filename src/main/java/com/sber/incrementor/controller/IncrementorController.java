@@ -1,5 +1,6 @@
 package com.sber.incrementor.controller;
 
+import com.sber.incrementor.exception.model.InvalidMaxValueException;
 import com.sber.incrementor.service.IncrementorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class IncrementorController {
 
+    private static final String MAX_VALUE_EXCEPTION_MESSAGE = "Maximum value can not be less than 0!";
+
     private final IncrementorService incrementorService;
 
     @GetMapping(value = "/number", produces = "application/json")
@@ -30,7 +33,11 @@ public class IncrementorController {
     }
 
     @PutMapping(value = "/maximum", produces = "application/json")
-    public void setMaximumValue(@RequestParam int newMaxValue) {
+    public void setMaximumValue(@RequestParam int newMaxValue) throws InvalidMaxValueException {
+        if(newMaxValue < 0) {
+            throw new InvalidMaxValueException(MAX_VALUE_EXCEPTION_MESSAGE);
+        }
+
         incrementorService.setMaximumValue(newMaxValue);
     }
 }

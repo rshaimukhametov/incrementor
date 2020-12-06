@@ -1,6 +1,8 @@
 package com.sber.incrementor.service;
 
+import com.sber.incrementor.exception.model.InvalidMaxValueException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,8 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class IncrementorService implements IIncrementor {
 
-    private final AtomicInteger counter = new AtomicInteger(0);
-    private final AtomicInteger maxValue = new AtomicInteger(Integer.MAX_VALUE);
+    private AtomicInteger counter = new AtomicInteger(0);
+    private AtomicInteger maxValue = new AtomicInteger(Integer.MAX_VALUE);
 
     @Override
     public int getNumber() {
@@ -28,10 +30,11 @@ public class IncrementorService implements IIncrementor {
         while(true) {
             int existingValue = getNumber();
             int newValue = existingValue + 1;
+            if(getNumber() >= getMaximumValue()) {
+                setCurrentNumberToZero();
+                return;
+            }
             if(counter.compareAndSet(existingValue, newValue)) {
-                if(getNumber() > getMaximumValue()) {
-                    setCurrentNumberToZero();
-                }
                 return;
             }
         }
@@ -39,9 +42,6 @@ public class IncrementorService implements IIncrementor {
 
     @Override
     public void setMaximumValue(int newMaxValue) {
-        if(newMaxValue < 0) {
-            return;
-        }
 
         while(true) {
             int existingValue = getMaximumValue();
