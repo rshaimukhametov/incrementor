@@ -1,11 +1,11 @@
-package com.sber.incrementor;
+package com.sber.incrementor.service;
 
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
-public class Incrementor implements IIncrementor {
+public class IncrementorService implements IIncrementor {
 
     private final AtomicInteger counter = new AtomicInteger(0);
     private final AtomicInteger maxValue = new AtomicInteger(Integer.MAX_VALUE);
@@ -37,8 +37,7 @@ public class Incrementor implements IIncrementor {
 
         while(true) {
             int existingValue = maxValue.get();
-
-            if(counter.compareAndSet(existingValue, newMaxValue)) {
+            if(maxValue.compareAndSet(existingValue, newMaxValue)) {
                 if(getNumber() > maxValue.get()) {
                     setCurrentNumberToZero();
                 }

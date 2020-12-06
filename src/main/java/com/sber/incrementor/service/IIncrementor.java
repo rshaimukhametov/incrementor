@@ -1,4 +1,4 @@
-package com.sber.incrementor;
+package com.sber.incrementor.service;
 
 /**
  * Defines methods for working with simple incrementor which has
